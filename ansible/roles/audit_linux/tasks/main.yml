@@ -1,0 +1,83 @@
+---
+# audit_linux/tasks/main.yml
+# Vérifie l'état CIS de la machine — lecture seule
+
+- name: "INIT | Créer le dossier de résultats"
+  file:
+    path: "{{ results_dir }}"
+    state: directory
+    mode: '0750'
+
+- name: "INIT | Initialiser la liste des résultats"
+  set_fact:
+    audit_results: []
+
+# ── CONTRÔLE 1 ──────────────────────────────────────
+- name: "CIS 5.2.1 | Vérifier que root login SSH est désactivé"
+  shell: grep -E '^PermitRootLogin' /etc/ssh/sshd_config | awk '{print $2}'
+  register: ssh_root_login
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 5.2.1 | Enregistrer le résultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '5.2.1',
+      'description': 'SSH root login désactivé',
+      'status': 'PASS' if ssh_root_login.stdout | trim | lower == 'no' else 'FAIL',
+      'valeur_actuelle': ssh_root_login.stdout | trim,
+      'valeur_attendue': 'no'
+    }] }}"
+
+# ── CONTRÔLE 2 ──────────────────────────────────────
+- name: "CIS 5.3.1 | Vérifier la longueur minimale du mot de passe"
+  shell: grep -E '^minlen' /etc/security/pwquality.conf | awk '{print $3}'
+  register: pwd_minlen
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 5.3.1 | Enregistrer le résultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '5.3.1',
+      'description': 'Longueur minimale mot de passe >= 14',
+      'status': 'PASS' if pwd_minlen.stdout | trim | int >= 14 else 'FAIL',
+      'valeur_actuelle': pwd_minlen.stdout | trim,
+      'valeur_attendue': '14'
+    }] }}"
+
+# ── CONTRÔLE 3 ──────────────────────────────────────
+- name: "CIS 4.1.1 | Vérifier qu'auditd est installé"
+  shell: dpkg -s auditd 2>/dev/null | grep -c 'Status: install ok'
+  register: auditd_check
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 4.1.1 | Enregistrer le résultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '4.1.1',
+      'description': 'auditd est installé',
+      'status': 'PASS' if auditd_check.stdout | trim == '1' else 'FAIL',
+      'valeur_actuelle': 'installé' if auditd_check.stdout | trim == '1' else 'absent',
+      'valeur_attendue': 'installé'
+    }] }}"
+
+# ── RÉSUMÉ ──────────────────────────────────────────
+- name: "RAPPORT | Afficher les résultats"
+  debug:
+    msg: |
+      ══════════════════════════════════════
+       Audit CIS — {{ inventory_hostname }}
+      ══════════════════════════════════════
+      {% for r in audit_results %}
+       [{{ r.status }}] {{ r.cis_id }} — {{ r.description }}
+              Actuel   : {{ r.valeur_actuelle }}
+              Attendu  : {{ r.valeur_attendue }}
+      {% endfor %}
+      ══════════════════════════════════════
+
+- name: "RAPPORT | Sauvegarder en JSON"
+  copy:
+    content: "{{ audit_results | to_nice_json }}"
+    dest: "{{ results_dir }}/{{ inventory_hostname }}_audit.json"

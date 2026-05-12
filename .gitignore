@@ -1,0 +1,17 @@
+# Secrets — jamais dans Git
+.vault_pass
+*.vault
+ansible/group_vars/vault.yml
+
+# Résultats d'audit (peuvent contenir des infos sensibles)
+/tmp/hardening-results/
+
+# Python
+__pycache__/
+*.pyc
+
+# Ansible
+*.retry
+
+# OS
+.DS_Store

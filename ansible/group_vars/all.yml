@@ -1,0 +1,6 @@
+---
+# Variables globales — hardening-platform
+
+cis_level: 1
+results_dir: "/tmp/hardening-results"
+audit_only: false

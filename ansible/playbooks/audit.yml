@@ -1,0 +1,10 @@
+---
+# playbooks/audit.yml
+# Lance l'audit CIS sur toutes les machines Linux
+
+- name: "Audit CIS — Linux"
+  hosts: linux_cibles
+  gather_facts: true
+
+  roles:
+    - role: audit_linux
