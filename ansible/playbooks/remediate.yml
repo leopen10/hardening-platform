@@ -1,0 +1,10 @@
+---
+# playbooks/remediate.yml
+# Applique les corrections CIS sur toutes les machines Linux
+
+- name: "Remédiation CIS — Linux"
+  hosts: linux_cibles
+  gather_facts: true
+
+  roles:
+    - role: remediate_linux
