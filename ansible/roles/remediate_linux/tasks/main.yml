@@ -1,0 +1,84 @@
+---
+# remediate_linux/tasks/main.yml
+# Corrige les écarts CIS détectés par l'audit — idempotent
+
+- name: "INIT | Initialiser le journal des changements"
+  set_fact:
+    changes_log: []
+
+# ── CORRECTION 1 ────────────────────────────────────
+- name: "CIS 5.2.1 | Désactiver root login SSH"
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+    backup: true
+  register: ssh_fix
+  notify: restart sshd
+
+- name: "CIS 5.2.1 | Enregistrer le changement"
+  set_fact:
+    changes_log: "{{ changes_log + [{
+      'cis_id': '5.2.1',
+      'action': 'PermitRootLogin mis à no',
+      'changed': ssh_fix.changed
+    }] }}"
+
+# ── CORRECTION 2 ────────────────────────────────────
+- name: "CIS 4.1.1 | Installer auditd"
+  apt:
+    name: auditd
+    state: present
+  register: auditd_fix
+
+- name: "CIS 4.1.1 | Activer auditd au démarrage"
+  systemd:
+    name: auditd
+    state: started
+    enabled: true
+  register: auditd_svc
+
+- name: "CIS 4.1.1 | Enregistrer le changement"
+  set_fact:
+    changes_log: "{{ changes_log + [{
+      'cis_id': '4.1.1',
+      'action': 'auditd installé et activé',
+      'changed': auditd_fix.changed
+    }] }}"
+
+# ── CORRECTION 3 ────────────────────────────────────
+- name: "CIS 5.3.1 | Installer libpam-pwquality"
+  apt:
+    name: libpam-pwquality
+    state: present
+  register: pwquality_pkg
+
+- name: "CIS 5.3.1 | Configurer longueur minimale mot de passe"
+  lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?minlen'
+    line: 'minlen = 14'
+    state: present
+    create: true
+  register: pwd_fix
+
+- name: "CIS 5.3.1 | Enregistrer le changement"
+  set_fact:
+    changes_log: "{{ changes_log + [{
+      'cis_id': '5.3.1',
+      'action': 'minlen=14 configuré',
+      'changed': pwd_fix.changed
+    }] }}"
+
+# ── RÉSUMÉ ──────────────────────────────────────────
+- name: "RAPPORT | Afficher le résumé des corrections"
+  debug:
+    msg: |
+      ══════════════════════════════════════════
+       Remédiation CIS — {{ inventory_hostname }}
+      ══════════════════════════════════════════
+      {% for c in changes_log %}
+       [{{ 'MODIFIÉ' if c.changed else 'DÉJÀ OK' }}] {{ c.cis_id }} — {{ c.action }}
+      {% endfor %}
+      ══════════════════════════════════════════
