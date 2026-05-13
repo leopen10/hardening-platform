@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-05-13T03:18:19.445386",
+  "summary": {
+    "total_hosts": 1,
+    "total_controls": 12,
+    "passed": 8,
+    "failed": 4,
+    "compliance_rate": 66.7
+  },
+  "hosts": [
+    {
+      "host": "ubuntu-cible-01",
+      "controls": [
+        {
+          "cis_id": "5.2.1",
+          "description": "SSH root login desactive",
+          "status": "PASS",
+          "valeur_actuelle": "no",
+          "valeur_attendue": "no"
+        },
+        {
+          "cis_id": "5.3.1",
+          "description": "Longueur minimale mot de passe >= 14",
+          "status": "PASS",
+          "valeur_actuelle": "14",
+          "valeur_attendue": "14"
+        },
+        {
+          "cis_id": "4.1.1",
+          "description": "auditd est installe",
+          "status": "PASS",
+          "valeur_actuelle": "installe",
+          "valeur_attendue": "installe"
+        },
+        {
+          "cis_id": "3.1.1",
+          "description": "IP forwarding desactive",
+          "status": "PASS",
+          "valeur_actuelle": "0",
+          "valeur_attendue": "0"
+        },
+        {
+          "cis_id": "3.2.1",
+          "description": "ICMP redirects refuses",
+          "status": "FAIL",
+          "valeur_actuelle": "1",
+          "valeur_attendue": "0"
+        },
+        {
+          "cis_id": "1.1.1",
+          "description": "Module cramfs desactive",
+          "status": "FAIL",
+          "valeur_actuelle": "0\n0",
+          "valeur_attendue": "1"
+        },
+        {
+          "cis_id": "5.2.4",
+          "description": "SSH Protocol 2 uniquement",
+          "status": "PASS",
+          "valeur_actuelle": "defaut (2)",
+          "valeur_attendue": "2"
+        },
+        {
+          "cis_id": "5.2.13",
+          "description": "SSH timeout configure (<= 300)",
+          "status": "FAIL",
+          "valeur_actuelle": "non configure",
+          "valeur_attendue": "<= 300"
+        },
+        {
+          "cis_id": "2.2.1",
+          "description": "rsyslog est installe",
+          "status": "PASS",
+          "valeur_actuelle": "installe",
+          "valeur_attendue": "installe"
+        },
+        {
+          "cis_id": "2.1.1",
+          "description": "Service cups desactive",
+          "status": "PASS",
+          "valeur_actuelle": "disabled",
+          "valeur_attendue": "disabled"
+        },
+        {
+          "cis_id": "1.4.1",
+          "description": "AIDE installe pour integrite fichiers",
+          "status": "FAIL",
+          "valeur_actuelle": "absent",
+          "valeur_attendue": "installe"
+        },
+        {
+          "cis_id": "5.4.2",
+          "description": "Seul root a uid=0",
+          "status": "PASS",
+          "valeur_actuelle": "0 autre(s) compte(s) uid=0",
+          "valeur_attendue": "0"
+        }
+      ]
+    }
+  ]
+}

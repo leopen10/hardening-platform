@@ -1,10 +1,16 @@
 ---
-# playbooks/audit.yml
-# Lance l'audit CIS sur toutes les machines Linux
-
 - name: "Audit CIS — Linux"
   hosts: linux_cibles
   gather_facts: true
+
+  pre_tasks:
+    - name: "Creer le dossier local de resultats"
+      file:
+        path: "{{ results_dir }}"
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+      become: false
 
   roles:
     - role: audit_linux

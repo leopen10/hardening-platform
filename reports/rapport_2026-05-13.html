@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rapport CIS — 2026-05-13 03:18</title>
+<style>
+  body { font-family: -apple-system, sans-serif; background:#0f172a; color:#e2e8f0; margin:0; }
+  .header { background:#1e293b; padding:2rem; border-bottom:1px solid #334155; }
+  .header h1 { margin:0; font-size:1.5rem; color:#f8fafc; }
+  .header p { margin:0.5rem 0 0; color:#94a3b8; font-size:0.9rem; }
+  .container { max-width:1200px; margin:0 auto; padding:2rem; }
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+  .stat { background:#1e293b; border-radius:8px; padding:1.5rem; text-align:center; }
+  .stat-number { font-size:2rem; font-weight:700; }
+  .stat-label { font-size:0.8rem; color:#94a3b8; margin-top:0.25rem; }
+  table { width:100%; border-collapse:collapse; background:#1e293b; border-radius:8px; overflow:hidden; }
+  th { background:#334155; padding:0.75rem 1rem; text-align:left; font-size:0.8rem;
+        text-transform:uppercase; color:#94a3b8; }
+  td { padding:0.75rem 1rem; border-bottom:1px solid #334155; font-size:0.85rem; }
+  tr:last-child td { border-bottom:none; }
+  code { background:#334155; padding:2px 6px; border-radius:4px; font-size:0.8rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Rapport de Conformité CIS Benchmark</h1>
+  <p>Généré le 2026-05-13 03:18 — Hardening Platform v1.0</p>
+</div>
+<div class="container">
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number" style="color:#3b82f6;">1</div>
+      <div class="stat-label">Hôtes audités</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number" style="color:#3b82f6;">12</div>
+      <div class="stat-label">Contrôles total</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number" style="color:#22c55e;">8</div>
+      <div class="stat-label">Conformes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number" style="color:#ef4444;">4</div>
+      <div class="stat-label">Non conformes</div>
+    </div>
+  </div>
+  <div class="stat" style="margin-bottom:2rem; text-align:center;">
+    <div class="stat-number" style="color:#f59e0b; font-size:3rem;">66.7%</div>
+    <div class="stat-label">Conformité globale</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Hôte</th>
+        <th>ID CIS</th>
+        <th>Description</th>
+        <th>Statut</th>
+        <th>Valeur actuelle</th>
+        <th>Valeur attendue</th>
+      </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>5.2.1</code></td>
+                <td>SSH root login desactive</td>
+                <td style="color:#22c55e; font-weight:600;">PASS</td>
+                <td><code>no</code></td>
+                <td><code>no</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>5.3.1</code></td>
+                <td>Longueur minimale mot de passe >= 14</td>
+                <td style="color:#22c55e; font-weight:600;">PASS</td>
+                <td><code>14</code></td>
+                <td><code>14</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>4.1.1</code></td>
+                <td>auditd est installe</td>
+                <td style="color:#22c55e; font-weight:600;">PASS</td>
+                <td><code>installe</code></td>
+                <td><code>installe</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>3.1.1</code></td>
+                <td>IP forwarding desactive</td>
+                <td style="color:#22c55e; font-weight:600;">PASS</td>
+                <td><code>0</code></td>
+                <td><code>0</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>3.2.1</code></td>
+                <td>ICMP redirects refuses</td>
+                <td style="color:#ef4444; font-weight:600;">FAIL</td>
+                <td><code>1</code></td>
+                <td><code>0</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>1.1.1</code></td>
+                <td>Module cramfs desactive</td>
+                <td style="color:#ef4444; font-weight:600;">FAIL</td>
+                <td><code>0
+0</code></td>
+                <td><code>1</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>5.2.4</code></td>
+                <td>SSH Protocol 2 uniquement</td>
+                <td style="color:#22c55e; font-weight:600;">PASS</td>
+                <td><code>defaut (2)</code></td>
+                <td><code>2</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>5.2.13</code></td>
+                <td>SSH timeout configure (<= 300)</td>
+                <td style="color:#ef4444; font-weight:600;">FAIL</td>
+                <td><code>non configure</code></td>
+                <td><code><= 300</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>2.2.1</code></td>
+                <td>rsyslog est installe</td>
+                <td style="color:#22c55e; font-weight:600;">PASS</td>
+                <td><code>installe</code></td>
+                <td><code>installe</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>2.1.1</code></td>
+                <td>Service cups desactive</td>
+                <td style="color:#22c55e; font-weight:600;">PASS</td>
+                <td><code>disabled</code></td>
+                <td><code>disabled</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>1.4.1</code></td>
+                <td>AIDE installe pour integrite fichiers</td>
+                <td style="color:#ef4444; font-weight:600;">FAIL</td>
+                <td><code>absent</code></td>
+                <td><code>installe</code></td>
+            </tr>
+            <tr>
+                <td>ubuntu-cible-01</td>
+                <td><code>5.4.2</code></td>
+                <td>Seul root a uid=0</td>
+                <td style="color:#22c55e; font-weight:600;">PASS</td>
+                <td><code>0 autre(s) compte(s) uid=0</code></td>
+                <td><code>0</code></td>
+            </tr></tbody>
+  </table>
+</div>
+</body>
+</html>

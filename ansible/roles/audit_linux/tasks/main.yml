@@ -216,4 +216,5 @@
 - name: "RAPPORT | Sauvegarder en JSON"
   copy:
     content: "{{ audit_results | to_nice_json }}"
-    dest: "{{ results_dir }}/{{ inventory_hostname }}_audit.json"
+    dest: "/home/ansible/{{ inventory_hostname }}_audit.json"
+    mode: '0644'
