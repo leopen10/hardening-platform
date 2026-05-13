@@ -56,6 +56,149 @@
       'valeur_actuelle': 'installe' if auditd_check.stdout | trim == '1' else 'absent',
       'valeur_attendue': 'installe'
     }] }}"
+- name: "CIS 3.1.1 | Verifier que IP forwarding est desactive"
+  shell: sysctl net.ipv4.ip_forward | awk '{print $3}'
+  register: ip_forward
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 3.1.1 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '3.1.1',
+      'description': 'IP forwarding desactive',
+      'status': 'PASS' if ip_forward.stdout | trim == '0' else 'FAIL',
+      'valeur_actuelle': ip_forward.stdout | trim,
+      'valeur_attendue': '0'
+    }] }}"
+
+- name: "CIS 3.2.1 | Verifier que ICMP redirects sont refuses"
+  shell: sysctl net.ipv4.conf.all.accept_redirects | awk '{print $3}'
+  register: icmp_redirect
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 3.2.1 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '3.2.1',
+      'description': 'ICMP redirects refuses',
+      'status': 'PASS' if icmp_redirect.stdout | trim == '0' else 'FAIL',
+      'valeur_actuelle': icmp_redirect.stdout | trim,
+      'valeur_attendue': '0'
+    }] }}"
+
+- name: "CIS 1.1.1 | Verifier que cramfs est desactive"
+  shell: modprobe -n -v cramfs 2>/dev/null | grep -c "install /bin/true" || echo 0
+  register: cramfs_check
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 1.1.1 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '1.1.1',
+      'description': 'Module cramfs desactive',
+      'status': 'PASS' if cramfs_check.stdout | trim == '1' else 'FAIL',
+      'valeur_actuelle': cramfs_check.stdout | trim,
+      'valeur_attendue': '1'
+    }] }}"
+
+- name: "CIS 5.2.4 | Verifier le protocole SSH"
+  shell: grep -E "^Protocol" /etc/ssh/sshd_config | awk '{print $2}'
+  register: ssh_protocol
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 5.2.4 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '5.2.4',
+      'description': 'SSH Protocol 2 uniquement',
+      'status': 'PASS' if ssh_protocol.stdout | trim == '2' or ssh_protocol.stdout | trim == '' else 'FAIL',
+      'valeur_actuelle': ssh_protocol.stdout | trim if ssh_protocol.stdout | trim != '' else 'defaut (2)',
+      'valeur_attendue': '2'
+    }] }}"
+
+- name: "CIS 5.2.13 | Verifier le timeout SSH"
+  shell: grep -E "^ClientAliveInterval" /etc/ssh/sshd_config | awk '{print $2}'
+  register: ssh_timeout
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 5.2.13 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '5.2.13',
+      'description': 'SSH timeout configure (<= 300)',
+      'status': 'PASS' if ssh_timeout.stdout | trim != '' and ssh_timeout.stdout | trim | int <= 300 else 'FAIL',
+      'valeur_actuelle': ssh_timeout.stdout | trim if ssh_timeout.stdout | trim != '' else 'non configure',
+      'valeur_attendue': '<= 300'
+    }] }}"
+
+- name: "CIS 2.2.1 | Verifier que rsyslog est installe"
+  shell: dpkg -s rsyslog 2>/dev/null | grep -c "Status"
+  register: rsyslog_check
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 2.2.1 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '2.2.1',
+      'description': 'rsyslog est installe',
+      'status': 'PASS' if rsyslog_check.stdout | trim == '1' else 'FAIL',
+      'valeur_actuelle': 'installe' if rsyslog_check.stdout | trim == '1' else 'absent',
+      'valeur_attendue': 'installe'
+    }] }}"
+
+- name: "CIS 2.1.1 | Verifier que le service cups est desactive"
+  shell: systemctl is-enabled cups 2>/dev/null || echo disabled
+  register: cups_check
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 2.1.1 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '2.1.1',
+      'description': 'Service cups desactive',
+      'status': 'PASS' if cups_check.stdout | trim in ['disabled', 'not-found'] else 'FAIL',
+      'valeur_actuelle': cups_check.stdout | trim,
+      'valeur_attendue': 'disabled'
+    }] }}"
+
+- name: "CIS 1.4.1 | Verifier que AIDE est installe"
+  shell: dpkg -s aide 2>/dev/null | grep -c "Status"
+  register: aide_check
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 1.4.1 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '1.4.1',
+      'description': 'AIDE installe pour integrite fichiers',
+      'status': 'PASS' if aide_check.stdout | trim == '1' else 'FAIL',
+      'valeur_actuelle': 'installe' if aide_check.stdout | trim == '1' else 'absent',
+      'valeur_attendue': 'installe'
+    }] }}"
+
+- name: "CIS 5.4.2 | Verifier que root est le seul uid 0"
+  shell: awk -F':' '($3 == 0) {print $1}' /etc/passwd | grep -v root | wc -l
+  register: uid0_check
+  changed_when: false
+  failed_when: false
+
+- name: "CIS 5.4.2 | Enregistrer le resultat"
+  set_fact:
+    audit_results: "{{ audit_results + [{
+      'cis_id': '5.4.2',
+      'description': 'Seul root a uid=0',
+      'status': 'PASS' if uid0_check.stdout | trim == '0' else 'FAIL',
+      'valeur_actuelle': uid0_check.stdout | trim + ' autre(s) compte(s) uid=0',
+      'valeur_attendue': '0'
+    }] }}"
 
 - name: "RAPPORT | Afficher les resultats"
   debug:
