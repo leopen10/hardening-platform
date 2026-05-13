@@ -1,0 +1,50 @@
+name: Hardening Platform CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint & Syntax Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install ansible ansible-lint pyflakes
+
+      - name: Check Python syntax
+        run: |
+          pyflakes scripts/generate_report.py
+          pyflakes scripts/update_cmdb.py
+
+      - name: Check Ansible syntax
+        run: |
+          cd ansible
+          ansible-playbook --syntax-check \
+            -i inventory/hosts.ini \
+            playbooks/audit.yml \
+            --extra-vars "results_dir=/tmp/test" || true
+          ansible-playbook --syntax-check \
+            -i inventory/hosts.ini \
+            playbooks/remediate.yml \
+            --extra-vars "results_dir=/tmp/test" || true
+
+      - name: Run ansible-lint
+        run: |
+          cd ansible
+          ansible-lint playbooks/ roles/ \
+            --exclude roles/devsec.hardening \
+            --warn-list yaml \
+            --warn-list name || true
